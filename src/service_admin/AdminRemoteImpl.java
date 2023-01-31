@@ -225,7 +225,6 @@ public class AdminRemoteImpl extends UnicastRemoteObject implements AdminRemote{
 			ps.close();
 			con.closeCon();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
