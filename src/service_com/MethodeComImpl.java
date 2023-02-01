@@ -136,6 +136,29 @@ public class MethodeComImpl extends UnicastRemoteObject implements MethodeCom{
 		
 		return etus;
 	}
+	
+	@Override
+	public List<Integer> listeClsParEtud(String login) throws RemoteException {
+		List<Integer> classes = new ArrayList<Integer>();
+		String requete = "select * from personne p, cls_etu ce where login='"+login+"' and ce.numEtu=p.numPer ;";
+		
+		try {
+			Connection con = DriverManager.getConnection(url, userName, pwd);
+			ps = con.prepareStatement(requete);
+			rs= ps.executeQuery();
+			while(rs.next()) {
+			classes.add(rs.getInt("numCls"));
+			}
+			ps.close();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return classes;
+	}
 
 	@Override
 	public List<Prof> listeProf() throws RemoteException {
@@ -195,6 +218,32 @@ public class MethodeComImpl extends UnicastRemoteObject implements MethodeCom{
 		
 		return etus;
 		
+	}
+
+
+
+	@Override
+	public String typePers(String login) throws RemoteException {
+		String type=null;
+		String requete="select * from personne where login='"+login+"';";
+		Connection con;
+		try {
+			con = DriverManager.getConnection(url, userName, pwd);
+			ps = con.prepareStatement(requete);
+		    rs= ps.executeQuery();
+		    while(rs.next()) {
+		    	type= rs.getString("type");
+		    }
+		    
+		    rs.close();
+		    ps.close();
+		    con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return type;
 	}
 
 }

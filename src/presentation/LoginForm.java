@@ -75,7 +75,15 @@ public class LoginForm extends JFrame  {
 					String rep = com.connecter(personne);
 					JOptionPane.showMessageDialog(null, rep);
 					if(rep.equalsIgnoreCase("vous êtes connecté.")) { 
-					(new AdminFenetre()).firstFenetre();
+					
+						String type = com.typePers(login);
+						if(type.equals("admin")) {
+							(new AdminFenetre()).firstFenetre();
+						}else if(type.equals("prof")){
+							ProfFenetre prof =new ProfFenetre(login);
+						}else if(type.equals("etudiant")){
+							EtudiantFenetre prof =new EtudiantFenetre(login);
+						}
 					dispose();
 					}
 					else {

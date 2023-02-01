@@ -30,6 +30,10 @@ public class Etudiant extends Personne{
 	
 	
 
+	public Etudiant(int id) {
+		this.id=id;
+	}
+
 	public String getNom() {
 		return nom;
 	}
@@ -47,7 +51,6 @@ public class Etudiant extends Personne{
 	}
 
 	public int getId() {
-		
 		return id;
 	}
 	

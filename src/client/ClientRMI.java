@@ -13,10 +13,6 @@ import service_com.MethodeCom;
 
 public class ClientRMI {
 	public static void main(String[] args) {
-//			LoginForm loginForm = new LoginForm();
-//////		AdminFenetre af = new AdminFenetre();
-//////		af.afficherEtuds();
-////		Test test = new Test();
-		ProfFenetre p = new ProfFenetre("nassima");
+			LoginForm loginForm = new LoginForm();
 	}
 }

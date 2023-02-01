@@ -26,4 +26,8 @@ public interface PersonneRemote extends Remote{
 	public int returnNumCls(String login)throws RemoteException;
 
 	public int returnProf(String login) throws RemoteException;
+
+	public int idProf(String login) throws RemoteException;
+
+	public int idEtud(String login) throws RemoteException;
 }

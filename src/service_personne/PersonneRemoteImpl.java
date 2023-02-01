@@ -60,7 +60,7 @@ public class PersonneRemoteImpl extends UnicastRemoteObject implements PersonneR
 			ps.setInt(1, etu.getId());
 			ps.setString(2, msg);
 			ps.setInt(3, prof.getId());
-			 ps.executeQuery();
+			 ps.executeUpdate();
 			 ps.close();
 			 con.closeCon();
 		} catch (SQLException e) {
@@ -74,9 +74,9 @@ public class PersonneRemoteImpl extends UnicastRemoteObject implements PersonneR
 	public List<Boite> receptMsg(String type) throws RemoteException {
 		List<Boite> boites = new ArrayList<Boite>();
 		String requete=null;
-		if(type.equals("prof")) {
+		if(type.equals("etudiant")) {
 			requete="select * from boiteEtud;";
-		}else if(type.equals("etudiant")) { 
+		}else if(type.equals("prof")) { 
 			requete="select * from boiteProf;";
 		}
 		ps = con.connecter(requete);
@@ -100,9 +100,9 @@ public class PersonneRemoteImpl extends UnicastRemoteObject implements PersonneR
 	public List<Boite> receptFile(String type) throws RemoteException {
 		List<Boite> boites = new ArrayList<Boite>();
 		String requete=null;
-		if(type.equals("prof")) {
+		if(type.equals("etudiant")) {
 			requete="select * from boiteetud;";
-		}else if(type.equals("etudiant")) {
+		}else if(type.equals("prof")) {
 			requete="select * from boiteprof;";
 			
 		}
@@ -162,5 +162,39 @@ public class PersonneRemoteImpl extends UnicastRemoteObject implements PersonneR
 		return num;
 	}
 	
+	@Override
+	public int idProf(String numCls) throws RemoteException {
+		int num=0;
+		int cls = Integer.valueOf(numCls);
+		String requete = "select * from classe where numCls="+cls;
+		ps = con.connecter(requete);
+		try {
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				num = rs.getInt("numProf");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return num;
+	}
+	
+	@Override
+	public int idEtud(String login) throws RemoteException {
+		int num=0;
+		String requete = "select * from personne where login='"+login+"'";
+		ps = con.connecter(requete);
+		try {
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				num = rs.getInt("numPer");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return num;
+	}
 
 }

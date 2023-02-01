@@ -41,12 +41,13 @@ import metier.Prof;
 import service_com.MethodeCom;
 import service_personne.PersonneRemote;
 
-public class ProfFenetre {
+public class EtudiantFenetre {
+
 	String urlPersonne = "rmi://localhost:1099/personne";
 	String urlCommun = "rmi://localhost:1099/commun";
 	
-	public ProfFenetre(String login) {
-		JFrame frame = new JFrame("POFESSEUR_PAGE");
+	public EtudiantFenetre(String login) {
+		JFrame frame = new JFrame("ETUDIANT_PAGE");
 		frame.setLocation(500,200);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new FlowLayout());
@@ -60,39 +61,37 @@ public class ProfFenetre {
 	    panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
 	    
 	    
-	    JLabel labelHead = new JLabel("La liste des etudiants :");
+	    JLabel labelHead = new JLabel("La liste des classes :");
 		labelHead.setFont(new Font("Arial",Font.TRUETYPE_FONT,20));
 		
 		
 		
 			MethodeCom com = (MethodeCom) Naming.lookup(urlCommun);
 			PersonneRemote personne = (PersonneRemote) Naming.lookup(urlPersonne);
-			int numCls = personne.returnNumCls(login);
-			List<Etudiant> etuds = com.listeEtu(numCls);
 			
-			DefaultListModel<String> nomPrenom = new DefaultListModel<>();
-			for (Etudiant etu : etuds) {
-				nomPrenom.addElement(etu.getNom()+"_"+etu.getPrenom());
+			List<Integer> classes = com.listeClsParEtud(login);
+			
+			DefaultListModel<String> numeroClasse = new DefaultListModel<>();
+			for (Integer classe : classes ) {
+				numeroClasse.addElement(String.valueOf(classe));
 			}
 			
-			JList<String> etudiants = new JList<>(nomPrenom);
+			JList<String> listClasses = new JList<>(numeroClasse);
 			
 			panel1.add(labelHead);
-			panel1.add(etudiants);
+			panel1.add(listClasses);
 			panel2.add(panel1);
 			
-			JButton button = new JButton("CHATROOM");
-			panel2.add(button);
-			
-			button.addActionListener(new ActionListener() {
-
+			listClasses.addListSelectionListener(new ListSelectionListener() {
+	        	String chemin = (String) listClasses.getSelectedValue();
+	        	
 				@Override
-				public void actionPerformed(ActionEvent e) {
-						chatRoom(login);
-						frame.dispose();
+				public void valueChanged(ListSelectionEvent e) {
+					chatRoom(chemin, login);
+					frame.dispose();
+					
 				}
-		    	
-		    });
+	        		});
 			
 			frame.add(panel2);
 			
@@ -127,7 +126,7 @@ public class ProfFenetre {
 //		
 //	};
 	
-	public void chatRoom(String login) {
+	public void chatRoom(String classe, String login) {
 //		Thread thread = new Thread(runnable);
 //		thread.start();
 		
@@ -148,10 +147,10 @@ public class ProfFenetre {
         PersonneRemote personne = null;
 		try {
 			personne = (PersonneRemote) Naming.lookup(urlPersonne);
-			boitesMsg = personne.receptMsg("prof");
+			boitesMsg = personne.receptMsg("etudiant");
 			 for(Boite boite: boitesMsg) {
 				if(boite.getMessage()!=null) {
-        		chatArea.append("  "+boite.getMessage() + "\n");
+        		chatArea.append(String.valueOf(boite.getFichier()+ "\n"));
 				}
 		}
 		} catch (RemoteException e2) {
@@ -167,7 +166,7 @@ public class ProfFenetre {
         JLabel l = new JLabel("les fichiers");
         
         try {
-			boitesFile = personne.receptFile("prof");
+			boitesFile = personne.receptFile("etudiant");
 		} catch (RemoteException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -175,7 +174,7 @@ public class ProfFenetre {
 		DefaultListModel<String> fichiers = new DefaultListModel<>();
 		for(Boite boite: boitesFile) {
 			if(boite.getFichier()!=null) {
-			fichiers.addElement(boite.getFichier());
+			fichiers.addElement(String.valueOf(boite.getFichier()));
 			}
 		}
         
@@ -188,7 +187,7 @@ public class ProfFenetre {
         
         
         fichierArea.addListSelectionListener(new ListSelectionListener() {
-        	String chemin = fichierArea.getSelectedValue();
+        	String chemin = (String) fichierArea.getSelectedValue();
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				
@@ -240,10 +239,13 @@ public class ProfFenetre {
                 
 					PersonneRemote personne;
 					try {
-						personne = (PersonneRemote) Naming.lookup(urlPersonne);
-						int numProf = personne.returnProf(login);
-					     Prof prof = new Prof(numProf); 
-					     personne.sendToEtud(message, "message", prof);
+						 personne = (PersonneRemote) Naming.lookup(urlPersonne);
+						 System.out.println("classe : "+classe);
+						int id_prof =personne.idProf(classe);
+						int id_etud =personne.idEtud(login);
+						Prof prof = new Prof(id_prof);
+						Etudiant etud = new Etudiant(id_etud);
+					     personne.sendToProf(message, prof, "message", etud);
 					} catch (MalformedURLException | RemoteException | NotBoundException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -268,9 +270,11 @@ public class ProfFenetre {
               
 				try {
 					PersonneRemote personne = (PersonneRemote) Naming.lookup(urlPersonne);
-					int numProf = personne.returnProf(login);
-				     Prof prof = new Prof(numProf); 
-				     personne.sendToEtud(chemin, "fichier", prof);
+					int id_prof =personne.idProf(classe);
+					int id_etud =personne.idEtud(login);
+					Prof prof = new Prof(id_prof);
+					Etudiant etud = new Etudiant(id_etud);
+				     personne.sendToProf(chemin, prof, "fichier", etud);
 				} catch (MalformedURLException | RemoteException | NotBoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -282,4 +286,6 @@ public class ProfFenetre {
         frame.add(bottomPanel, BorderLayout.SOUTH);
         
 	}
-}
+	}
+
+

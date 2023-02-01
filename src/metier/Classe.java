@@ -15,6 +15,15 @@ public class Classe implements Serializable{
 		super();
 	}
 
+	
+	
+	public Classe(int numero) {
+		super();
+		this.numero = numero;
+	}
+
+
+
 	public Classe(int numero, Prof prof, String departement) {
 		super();
 		this.numero = numero;

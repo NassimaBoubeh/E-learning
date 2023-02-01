@@ -10,6 +10,10 @@ import metier.Personne;
 import metier.Prof;
 
 public interface MethodeCom extends Remote{
+	
+		//pour retourner le type de personne
+		public String typePers(String login) throws RemoteException;
+	
 	    //pour que la personne s'authentifier 
 		public String connecter(Personne personne) throws RemoteException;
 		
@@ -24,5 +28,8 @@ public interface MethodeCom extends Remote{
 		
 		//pour afficher la liste des profs 
 		public List<Prof> listeProf() throws RemoteException;
+
+		//retourner la liste des classe pour un client identifié par son login
+		public List<Integer> listeClsParEtud(String login) throws RemoteException;
 		
 }
